@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    "rest_framework_simplejwt",
     "snipboxapp",
 ]
 
@@ -132,3 +133,6 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ],
 }
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
