@@ -13,23 +13,27 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class SnippetSerializer(serializers.ModelSerializer):
-    tag = TagSerializer()
+    tags = TagSerializer(many=True)
 
     class Meta:
         model = Snippet
-        fields = ['id', 'snippet_title', 'note', 'created_at', 'updated_at', 'user', 'tag']
+        fields = ['id', 'snippet_title', 'note', 'tags', 'created_at', 'updated_at', 'created_by']
 
     def create(self, validated_data):
-        # Extract the tag data
-        tag_data = validated_data.pop('tag', None)
+        # Extract tag data from validated_data
+        tags_data = validated_data.pop('tags', [])
 
-        # Ensure that the tag exists or is created
-        if tag_data:
+        # Create the snippet first
+        snippet = Snippet.objects.create(**validated_data)
+
+        # Loop through the tags and either create them or link existing ones
+        for tag_data in tags_data:
+            # Ensure the tag title is unique or use the existing tag
             tag, created = Tag.objects.get_or_create(tag_title=tag_data['title'])
-            validated_data['tag'] = tag
+            snippet.tags.add(tag)  # Add the tag to the snippet
 
-        # Create the snippet and return it
-        return Snippet.objects.create(**validated_data)
+        return snippet
+
 
 
 

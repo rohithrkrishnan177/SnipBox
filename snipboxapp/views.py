@@ -3,7 +3,7 @@ from rest_framework import viewsets, generics, status
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 
-from .models import Tag
+from .models import Tag, Snippet
 from .serializers import SnippetSerializer, TagSerializer, UserSerializer
 
 
@@ -16,11 +16,12 @@ class CreateTagAPI(generics.CreateAPIView):
 
 # Create API
 class CreateSnippetAPI(generics.CreateAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]  # Only authenticated users can create snippets
     serializer_class = SnippetSerializer
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        # Set the user to the current authenticated user
+        serializer.save(created_by=self.request.user)
 
 
 class TagViewSet(viewsets.ModelViewSet):
@@ -46,3 +47,33 @@ class CreateUserView(generics.CreateAPIView):
             }
         }
         return Response(response_data, status=status.HTTP_201_CREATED)
+
+
+class SnippetOverviewAPI(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]  # Only authenticated users can access this API
+    serializer_class = SnippetSerializer
+
+    def get_queryset(self):
+        # Filter snippets by the authenticated user
+        return Snippet.objects.filter(created_by=self.request.user)
+
+    def list(self, request, *args, **kwargs):
+        # Get the list of snippets for the current user
+        snippets = self.get_queryset()
+
+        # Count the total number of snippets
+        total_count = snippets.count()
+
+        # Serialize the snippets
+        serializer = self.get_serializer(snippets, many=True)
+
+        # Build the response with total count and snippets
+        return Response({
+            "total_count": total_count,
+            "snippets": serializer.data
+        })
+
+
+class SnippetDetailAPI(generics.RetrieveAPIView):
+    queryset = Snippet.objects.all()
+    serializer_class = SnippetSerializer
