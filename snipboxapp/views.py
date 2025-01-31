@@ -1,23 +1,26 @@
 from django.contrib.auth.models import User
-from django.core.mail import send_mail
 from rest_framework import viewsets, generics, status
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 
-from .models import Snippet, Tag
+from .models import Tag
 from .serializers import SnippetSerializer, TagSerializer, UserSerializer
 
 
-class SnippetViewSet(viewsets.ModelViewSet):
-    queryset = Snippet.objects.all()
+# Create TAG API
+class CreateTagAPI(generics.CreateAPIView):
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+    permission_classes = [IsAuthenticated]
+
+
+# Create API
+class CreateSnippetAPI(generics.CreateAPIView):
+    permission_classes = [IsAuthenticated]
     serializer_class = SnippetSerializer
 
     def perform_create(self, serializer):
-        serializer.save(created_by=self.request.user)
-
-    def get_queryset(self):
-        user = self.request.user
-        return self.queryset.filter(created_by=user)
+        serializer.save(user=self.request.user)
 
 
 class TagViewSet(viewsets.ModelViewSet):
