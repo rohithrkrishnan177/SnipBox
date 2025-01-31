@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
+from rest_framework.reverse import reverse
 from rest_framework.validators import UniqueValidator
 
 from .models import Snippet, Tag
@@ -17,24 +18,22 @@ class SnippetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Snippet
-        fields = ['id', 'snippet_title', 'note', 'tags', 'created_at', 'updated_at', 'created_by']
+        fields = ['id', 'snippet_title', 'note', 'tags', 'created_at', 'updated_at']
+        extra_kwargs = {'created_by': {'read_only': True}}  # Exclude from input
 
     def create(self, validated_data):
-        # Extract tag data from validated_data
         tags_data = validated_data.pop('tags', [])
 
-        # Create the snippet first
-        snippet = Snippet.objects.create(**validated_data)
+        # Get the logged-in user from context
+        user = self.context['request'].user
 
-        # Loop through the tags and either create them or link existing ones
+        snippet = Snippet.objects.create(created_by=user, **validated_data)
+
         for tag_data in tags_data:
-            # Ensure the tag title is unique or use the existing tag
-            tag, created = Tag.objects.get_or_create(tag_title=tag_data['title'])
-            snippet.tags.add(tag)  # Add the tag to the snippet
+            tag, created = Tag.objects.get_or_create(tag_title=tag_data['tag_title'])
+            snippet.tags.add(tag)
 
         return snippet
-
-
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -53,3 +52,30 @@ class UserSerializer(serializers.ModelSerializer):
             last_name=validated_data.get('last_name', '')
         )
         return user
+
+
+class SnippetOverViewSerializer(serializers.ModelSerializer):
+    url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Snippet
+        fields = ['id', 'url']
+
+    def get_url(self, obj):
+        request = self.context.get('request')
+        # Return the absolute URL for the snippet detail view
+        return reverse('snippet-detail', kwargs={'pk': obj.pk}, request=request) if request else None
+
+
+class SnippetViewSetSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Snippet
+        fields = ['id', 'snippet_title', 'note', 'created_at', 'updated_at']
+
+
+class TagListSerializer(serializers.ModelSerializer):
+    snippets = SnippetSerializer(many=True)
+
+    class Meta:
+        model = Tag
+        fields = ['id', 'tag_title', 'snippets']
