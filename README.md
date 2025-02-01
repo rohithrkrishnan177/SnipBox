@@ -1,6 +1,4 @@
 # SnipBox
-SnipBox
-
 SnipBox is a short note-saving app that allows users to save text snippets and organize them with tags. This project is built using Django for the backend, Django Rest Framework (DRF) for API development, and SQLite as the database.
 Features:
 
