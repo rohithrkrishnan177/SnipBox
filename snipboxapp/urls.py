@@ -13,7 +13,6 @@ urlpatterns = [
     path('login/', TokenObtainPairView.as_view(), name='login'),  # Login API
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('create-user/', CreateUserView.as_view(), name='create_user'),
-    path('create/', CreateSnippetAPI.as_view(), name='create_snippet'),
     path('snippets/create/', CreateSnippetAPI.as_view(), name='create-snippet'),
     path('snippets/', SnippetOverviewAPI.as_view(), name='snippet-overview'),
     path('snippets/<int:pk>/', SnippetDetailAPI.as_view(), name='snippet-detail'),
