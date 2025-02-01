@@ -14,24 +14,24 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class SnippetSerializer(serializers.ModelSerializer):
-    tags = TagSerializer(many=True)
+    tags = serializers.ListField(child=serializers.CharField(), write_only=True)
+    tag_details = TagSerializer(source='tags', many=True, read_only=True)
 
     class Meta:
         model = Snippet
-        fields = ['id', 'snippet_title', 'note', 'tags', 'created_at', 'updated_at']
-        extra_kwargs = {'created_by': {'read_only': True}}  # Exclude from input
+        fields = ['id', 'snippet_title', 'note', 'tags', 'tag_details', 'created_at', 'updated_at']
+        extra_kwargs = {'created_by': {'read_only': True}}  # Prevent input
 
     def create(self, validated_data):
-        tags_data = validated_data.pop('tags', [])
+        tag_titles = validated_data.pop('tags', [])  # Extract tag titles
 
-        # Get the logged-in user from context
-        user = self.context['request'].user
+        user = self.context['request'].user  # Get logged-in user
 
-        snippet = Snippet.objects.create(created_by=user, **validated_data)
+        snippet = Snippet.objects.create(created_by=user, **validated_data)  # Create snippet
 
-        for tag_data in tags_data:
-            tag, created = Tag.objects.get_or_create(tag_title=tag_data['tag_title'])
-            snippet.tags.add(tag)
+        for title in tag_titles:
+            tag, created = Tag.objects.get_or_create(tag_title=title)  # Get or create tag
+            snippet.tags.add(tag)  # Link tag to snippet
 
         return snippet
 

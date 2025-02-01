@@ -2,21 +2,12 @@ from django.contrib.auth.models import User
 from rest_framework import viewsets, generics, status
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.views import APIView
-
 from .models import Tag, Snippet
 from .serializers import SnippetSerializer, TagSerializer, UserSerializer, SnippetOverViewSerializer, \
     SnippetViewSetSerializer, TagListSerializer
 
 
-# Create TAG API
-class CreateTagAPI(generics.CreateAPIView):
-    queryset = Tag.objects.all()
-    serializer_class = TagSerializer
-    permission_classes = [IsAuthenticated]
-
-
-# Create API
+# Create Snippet API
 class CreateSnippetAPI(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = SnippetSerializer
@@ -31,6 +22,7 @@ class CreateSnippetAPI(generics.CreateAPIView):
 class TagViewSet(viewsets.ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
+    permission_classes = [IsAuthenticated]  # Requires authentication to access
 
 
 class CreateUserView(generics.CreateAPIView):

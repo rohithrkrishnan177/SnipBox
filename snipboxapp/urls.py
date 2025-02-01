@@ -4,14 +4,13 @@ from .views import TagViewSet, CreateUserView, CreateSnippetAPI, SnippetOverview
     SnippetDetailAPI, SnippetViewSet, TagDetailAPI
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
+# Create a single router instance
 router = DefaultRouter()
-router.register(r'tags', TagViewSet, basename='tag')
-
-router = DefaultRouter()
+router.register(r'tags', TagViewSet, basename='tags')
 router.register(r'snippets_details', SnippetViewSet, basename='snippet')
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path('api/', include(router.urls)),
     path('login/', TokenObtainPairView.as_view(), name='login'),  # Login API
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('create-user/', CreateUserView.as_view(), name='create_user'),
