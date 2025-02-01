@@ -14,4 +14,3 @@ class SnippetAdmin(admin.ModelAdmin):
     search_fields = ('snippet_title', 'note', 'created_by__username')
     list_filter = ('created_by', 'tags', 'created_at')
     raw_id_fields = ('created_by',)
-
