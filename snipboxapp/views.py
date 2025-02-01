@@ -13,7 +13,7 @@ class CreateSnippetAPI(generics.CreateAPIView):
     serializer_class = SnippetSerializer
 
     def get_serializer_context(self):
-        return {'request': self.request}  # Pass the request context
+        return {'request': self.request}
 
     def perform_create(self, serializer):
         serializer.save()
@@ -22,7 +22,7 @@ class CreateSnippetAPI(generics.CreateAPIView):
 class TagViewSet(viewsets.ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
-    permission_classes = [IsAuthenticated]  # Requires authentication to access
+    permission_classes = [IsAuthenticated]
 
 
 class CreateUserView(generics.CreateAPIView):
@@ -46,7 +46,7 @@ class CreateUserView(generics.CreateAPIView):
 
 
 class SnippetOverviewAPI(generics.ListAPIView):
-    permission_classes = [IsAuthenticated]  # Only authenticated users can access this API
+    permission_classes = [IsAuthenticated]
     serializer_class = SnippetOverViewSerializer
 
     def get_queryset(self):
@@ -55,14 +55,8 @@ class SnippetOverviewAPI(generics.ListAPIView):
     def list(self, request, *args, **kwargs):
         # Get the list of snippets for the current user
         snippets = self.get_queryset()
-
-        # Count the total number of snippets
         total_count = snippets.count()
-
-        # Serialize the snippets
         serializer = self.get_serializer(snippets, many=True, context={'request': request})
-
-        # Build the response with total count and snippets
         return Response({
             "total_count": total_count,
             "snippets": serializer.data
@@ -80,23 +74,16 @@ class SnippetViewSet(viewsets.ModelViewSet):
     serializer_class = SnippetViewSetSerializer
 
     def get_queryset(self):
-        # Return all snippets related to the logged-in user
         return Snippet.objects.filter(created_by=self.request.user)
 
     def perform_update(self, serializer):
-        # Perform the update operation (already handled by ModelViewSet)
         serializer.save()
 
     def destroy(self, request, *args, **kwargs):
-        """
-        Delete the selected snippet and return the list of remaining snippets.
-        """
         instance = self.get_object()
         self.perform_destroy(instance)
-
-        # Return the list of remaining snippets
         snippets = Snippet.objects.filter(created_by=request.user)
-        serializer = SnippetViewSetSerializer(snippets, many=True)  # Using the custom serializer
+        serializer = SnippetViewSetSerializer(snippets, many=True)
         return Response(serializer.data)
 
 
@@ -105,15 +92,9 @@ class TagDetailAPI(generics.RetrieveAPIView):
     serializer_class = TagListSerializer
 
     def get_queryset(self):
-        """
-        This query ensures that only tags that belong to the logged-in user are fetched.
-        """
         return Tag.objects.all()
 
     def retrieve(self, request, *args, **kwargs):
-        """
-        Retrieve a tag and the snippets linked to it.
-        """
         instance = self.get_object()
         serializer = self.get_serializer(instance)
         return Response(serializer.data)

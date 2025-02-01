@@ -10,7 +10,7 @@ class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
         fields = ['id', 'tag_title']
-        extra_kwargs = {'tag_title': {'validators': [UniqueValidator(queryset=Tag.objects.all())]}}  # Ensures title uniqueness
+        extra_kwargs = {'tag_title': {'validators': [UniqueValidator(queryset=Tag.objects.all())]}}
 
 
 class SnippetSerializer(serializers.ModelSerializer):
@@ -20,18 +20,18 @@ class SnippetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Snippet
         fields = ['id', 'snippet_title', 'note', 'tags', 'tag_details', 'created_at', 'updated_at']
-        extra_kwargs = {'created_by': {'read_only': True}}  # Prevent input
+        extra_kwargs = {'created_by': {'read_only': True}}
 
     def create(self, validated_data):
-        tag_titles = validated_data.pop('tags', [])  # Extract tag titles
+        tag_titles = validated_data.pop('tags', [])
 
-        user = self.context['request'].user  # Get logged-in user
+        user = self.context['request'].user
 
-        snippet = Snippet.objects.create(created_by=user, **validated_data)  # Create snippet
+        snippet = Snippet.objects.create(created_by=user, **validated_data)
 
         for title in tag_titles:
-            tag, created = Tag.objects.get_or_create(tag_title=title)  # Get or create tag
-            snippet.tags.add(tag)  # Link tag to snippet
+            tag, created = Tag.objects.get_or_create(tag_title=title)
+            snippet.tags.add(tag)
 
         return snippet
 
@@ -43,7 +43,6 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
-        # Create user and hash the password
         user = User.objects.create_user(
             username=validated_data['username'],
             password=validated_data['password'],
@@ -63,7 +62,6 @@ class SnippetOverViewSerializer(serializers.ModelSerializer):
 
     def get_url(self, obj):
         request = self.context.get('request')
-        # Return the absolute URL for the snippet detail view
         return reverse('snippet-detail', kwargs={'pk': obj.pk}, request=request) if request else None
 
 
