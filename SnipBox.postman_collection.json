@@ -1,0 +1,264 @@
+{
+	"info": {
+		"_postman_id": "cd3a61b5-b3d5-4ccc-b18c-a39a8b840331",
+		"name": "SnipBox",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12466679"
+	},
+	"item": [
+		{
+			"name": "LOGIN API",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"username\": \"newuser\",\n  \"password\": \"password123\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/login/",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"login",
+						""
+					]
+				},
+				"description": "Authentication APIs:\n\n1. Login API"
+			},
+			"response": []
+		},
+		{
+			"name": "CREATE USER",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"description": "This `CreateUserView` class is a Django REST Framework view that handles the creation of a new user. It is based on `generics.CreateAPIView`, which is designed for handling HTTP POST requests to create resources. Here's a breakdown:"
+			},
+			"response": []
+		},
+		{
+			"name": "CREATE TAGS LIST",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{bearer_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"tag_title\": \"tag10\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/api/tags/",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"api",
+						"tags",
+						""
+					]
+				},
+				"description": "This `TagViewSet` class is a Django REST Framework viewset that provides the basic CRUD functionality for handling `Tag` objects.\n\n  \nThis viewset will automatically handle the standard operations for tags, such as:\n\n- `GET` requests to list or retrieve tags.\n- `POST` requests to create new tags.\n- `PUT` and `PATCH` requests to update existing tags.\n- `DELETE` requests to remove tags."
+			},
+			"response": []
+		},
+		{
+			"name": "GET AL SNIPPETS- Overview API (total count, listing)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{bearer_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}api/snippets/",
+					"host": [
+						"{{base_url}}api"
+					],
+					"path": [
+						"snippets",
+						""
+					]
+				},
+				"description": "This `SnippetOverviewAPI` class is a Django REST Framework view that provides an overview of snippets, including their total count, and lists them for authenticated users\n\nFirst retrieves the list of snippets\n\nThen, it calculates the total number of snippets by calling `count()` on the queryset."
+			},
+			"response": []
+		},
+		{
+			"name": "CREATE SNIPPETS 2 Create API Snippets",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{bearer_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"snippet_title\": \"My Second Note\",\n    \"note\": \"This is an important note.\",\n    \"tags\": [\"TEST\", \"TEST2\"]\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/snippets/create/",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"snippets",
+						"create",
+						""
+					]
+				},
+				"description": "The `CreateSnippetAPI` class is a Django REST Framework view for creating new `Snippet` objects.\n\nThis view is used for handling the creation of snippets, allowing authenticated users to submit new snippets, which will be serialized and saved into the database."
+			},
+			"response": []
+		},
+		{
+			"name": "Detail API- created by the current user UPDATE / DELETE",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{bearer_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n        \"id\": 6,\n        \"snippet_title\": \"Sample Snippet\",\n        \"note\": \"Updated test\",\n        \"created_at\": \"2025-01-31T17:59:18.134874Z\",\n        \"updated_at\": \"2025-01-31T17:59:18.134898Z\"\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/api/snippets_details/",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"api",
+						"snippets_details",
+						""
+					]
+				},
+				"description": "The `SnippetViewSet` class is a Django REST Framework viewset that provides the full CRUD functionality (Create, Retrieve, Update, Delete) for `Snippet` objects, but with custom behavior for updates and deletions.\n\nThis viewset allows users to perform the full set of CRUD operations on their snippets, with custom handling for deletions to return the updated list of snippets after a deletion."
+			},
+			"response": []
+		},
+		{
+			"name": "TAG RELATES SNIPPETS",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{bearer_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/tags/1/",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"tags",
+						"1",
+						""
+					]
+				},
+				"description": "The `TagDetailAPI` class is a Django REST Framework view that retrieves detailed information about a specific `Tag` object, including its associated snippets  \nThis API is useful for retrieving detailed information about a single tag, including any related data (such as snippets) associated with it, and is typically used in a URL like `/tags//`."
+			},
+			"response": []
+		},
+		{
+			"name": "REFRESH TOKEN",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"refresh\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTczODQ3NjgxOSwiaWF0IjoxNzM4MzkwNDE5LCJqdGkiOiI0ZDAzNGEzNTlhYzQ0MzIxOGIwZmNjZWFlMTJmZDE1YiIsInVzZXJfaWQiOjJ9.ddZI784XACahhkNJYy_8Nblk_4HRllaHFKyT57i2Teg\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/token/refresh/",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"token",
+						"refresh",
+						""
+					]
+				},
+				"description": "Refresh token API"
+			},
+			"response": []
+		}
+	]
+}
